@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Saoodify Premium Master Player - DASH DRM</title>
+    <title>Saoodify Premium Master Player - Shaka DRM</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- DASH.js Library for .mpd streams -->
-    <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
+    <!-- 🚀 SHAKA PLAYER LIBRARY (Best for ClearKey DRM) 🚀 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.min.js"></script>
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,7 +43,6 @@
         .saoodify-player-container .controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%); padding: 30px max(25px, env(safe-area-inset-right)) 20px max(25px, env(safe-area-inset-left)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; opacity: 0; z-index: 101; }
         .saoodify-player-container .player-wrapper.show-controls .controls { transform: translateY(0); opacity: 1; }
         
-        /* 🔥 Timeline Header & LIVE Indicator 🔥 */
         .saoodify-player-container .timeline-header { display: flex; justify-content: flex-end; margin-bottom: 8px; width: 100%; }
         .saoodify-player-container .live-indicator { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
         .saoodify-player-container .red-dot { width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; box-shadow: 0 0 8px #ff0000; animation: pulse 1.5s infinite; }
@@ -158,7 +157,6 @@
 
             <div class="loading"><div class="spinner"></div></div>
             
-            <!-- Custom DRM Error Message -->
             <div id="drmError" class="drm-error-msg"></div>
             
             <div class="dt-indicator left" id="dtLeft"><svg viewBox="0 0 24 24"><polygon points="11,19 2,12 11,5"></polygon><polygon points="22,19 13,12 22,5"></polygon></svg><span>10s</span></div>
@@ -169,7 +167,6 @@
             <video id="video" playsinline preload="auto"></video>
 
             <div class="controls" id="controls">
-                <!-- 🔥 Timeline Header with LIVE indicator 🔥 -->
                 <div class="timeline-header">
                     <div class="live-indicator">
                         <span class="red-dot"></span>LIVE
@@ -232,11 +229,7 @@
         const closeComingSoonBtn = document.getElementById('closeComingSoonBtn');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        if (telegramId) {
-            tgServer1.href = 'tg://resolve?domain=Zs_Official_Bot&start=' + telegramId; tgServer2.href = 'https://t.me/Zs_Official_Bot?start=' + telegramId;
-        } else {
-            tgServer1.href = 'https://t.me/Zs_Official_Bot'; tgServer2.href = 'https://t.me/Zs_Official_Bot';
-        }
+        if (telegramId) { tgServer1.href = 'tg://resolve?domain=Zs_Official_Bot&start=' + telegramId; tgServer2.href = 'https://t.me/Zs_Official_Bot?start=' + telegramId; } else { tgServer1.href = 'https://t.me/Zs_Official_Bot'; tgServer2.href = 'https://t.me/Zs_Official_Bot'; }
 
         let hideControlsTimeout; let lastTapTime = 0; const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
@@ -248,70 +241,53 @@
         closeComingSoonBtn.addEventListener('click', (e) => { e.stopPropagation(); comingSoonModal.classList.remove('show'); });
         comingSoonModal.addEventListener('click', (e) => { if (e.target === comingSoonModal) comingSoonModal.classList.remove('show'); });
 
-        telegramBtn.addEventListener('click', (e) => { 
-            e.stopPropagation(); 
-            settingsMenu.classList.remove('show'); 
-            if(hasTelegram) { telegramModal.classList.add('show'); }
-            else { comingSoonModal.classList.add('show'); }
-            resetControlsTimeoutOnAction(); 
-        }); 
-
-        downloadBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            settingsMenu.classList.remove('show');
-            if(hasDownload) { window.open(downloadUrl, '_blank'); } 
-            else { comingSoonModal.classList.add('show'); }
-            resetControlsTimeoutOnAction(); 
-        });
+        telegramBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); if(hasTelegram) { telegramModal.classList.add('show'); } else { comingSoonModal.classList.add('show'); } resetControlsTimeoutOnAction(); }); 
+        downloadBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); if(hasDownload) { window.open(downloadUrl, '_blank'); } else { comingSoonModal.classList.add('show'); } resetControlsTimeoutOnAction(); });
         
         closeTelegramModalBtn.addEventListener('click', (e) => { e.stopPropagation(); telegramModal.classList.remove('show'); }); telegramModal.addEventListener('click', (e) => { if (e.target === telegramModal) telegramModal.classList.remove('show'); });
-
         document.addEventListener('contextmenu', (e) => e.preventDefault());
-
         playerWrapper.addEventListener('mousemove', showControls); playerWrapper.addEventListener('mouseenter', showControls); playerWrapper.addEventListener('mouseleave', () => { if (!video.paused) { playerWrapper.classList.remove('show-controls'); settingsMenu.classList.remove('show'); clearTimeout(hideControlsTimeout); } });
 
-        // 🚀 DASH.JS INITIALIZATION WITH CLEARKEY DRM 🚀
-        function loadVideoData() {
-            if (typeof dashjs !== 'undefined') {
-                var player = dashjs.MediaPlayer().create();
+        // 🚀 SHAKA PLAYER INITIALIZATION 🚀
+        async function initApp() {
+            shaka.polyfill.installAll();
+            
+            if (shaka.Player.isBrowserSupported()) {
+                const player = new shaka.Player(video);
                 
-                // 🔥 DRM CLEARKEY SETUP 🔥
-                // Aapne jo KID nikali thi: 2C338A11-7D43-4CE4-BBE3-569231AF90F1
-                // Uska Base64url encoded form hai: LDOKEX1DTOS741aSMa-Q8Q
-                const protData = {
-                    "org.w3.clearkey": {
-                        "clearkeys": {
-                            "2c338a117d434ce4bbe3569231af90f1":"a9633d901ee8a3f4f58ac314b5c5f4fb"
+                // 🔥 CLEARKEY INJECTION (Direct Hex Keys) 🔥
+                player.configure({
+                    drm: {
+                        clearKeys: {
+                            '2c338a117d434ce4bbe3569231af90f1': 'a9633d901ee8a3f4f58ac314b5c5f4fb'
                         }
                     }
-                };
-                
-                // Applying Protection Data
-                player.setProtectionData(protData);
-                
-                // Initialize player
-                player.initialize(video, videoSource, false);
-                
-                // Error Handling for DRM
-                player.on(dashjs.MediaPlayer.events.ERROR, function(e) {
-                    if (e.error === 'key_session' || e.error === 'drmKeySystemAccessDenied') {
-                        loading.classList.remove('active');
-                        drmError.innerHTML = '<strong>DRM Error</strong><br>Decryption Key is missing or invalid.';
-                        drmError.classList.add('show');
-                    }
                 });
-                
+
+                player.addEventListener('error', onPlayerErrorEvent);
+
+                try {
+                    loading.classList.add('active');
+                    await player.load(videoSource);
+                    loading.classList.remove('active');
+                    video.play();
+                } catch (e) {
+                    onPlayerError(e);
+                }
             } else {
-                console.error("Dash.js library failed to load.");
+                console.error('Browser not supported!');
             }
         }
-        
-        loadVideoData();
 
-        video.autoplay = false;
-        video.pause();
+        function onPlayerErrorEvent(event) { onPlayerError(event.detail); }
+        function onPlayerError(error) {
+            console.error('Error code', error.code, 'object', error);
+            loading.classList.remove('active');
+            drmError.innerHTML = '<strong>DRM Error</strong><br>Stream is highly encrypted or key is incorrect.';
+            drmError.classList.add('show');
+        }
 
-        video.addEventListener('play', () => playerWrapper.classList.add('has-started'));
+        document.addEventListener('DOMContentLoaded', initApp);
 
         function fastSeekOptimized(amount) { let newTime = video.currentTime + amount; video.currentTime = Math.max(0, Math.min(newTime, video.duration)); }
         function triggerIndicator(element) { element.classList.remove('active'); void element.offsetWidth; element.classList.add('active'); resetControlsTimeoutOnAction(); }
@@ -440,9 +416,7 @@
             else if (key === 'm') muteBtn.click(); 
         });
 
-        video.addEventListener('waiting', () => {
-            if (!drmError.classList.contains('show')) loading.classList.add('active');
-        }); 
+        video.addEventListener('waiting', () => { if (!drmError.classList.contains('show')) loading.classList.add('active'); }); 
         video.addEventListener('playing', () => loading.classList.remove('active'));
         video.addEventListener('canplay', () => loading.classList.remove('active'));
 
