@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Saoodify Premium Master Player - Shaka DRM</title>
+    <title>Saoodify Premium Master Player - Shaka DRM Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <!-- 🚀 SHAKA PLAYER LIBRARY (Best for ClearKey DRM) 🚀 -->
@@ -27,10 +27,19 @@
         .saoodify-player-container .video-title { color: #fff; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: transparent; flex-grow: 1; text-align: left; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: auto; }
         
         .saoodify-player-container .player-wrapper.show-controls .top-right-container { opacity: 1; pointer-events: auto; }
-        .saoodify-player-container .settings-menu { position: absolute; top: 55px; right: 0; background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(88, 81, 219, 0.3); border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; min-width: 180px; backdrop-filter: blur(15px); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7); transform: translateY(-10px); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .saoodify-player-container .settings-menu.show { display: flex; transform: translateY(0); opacity: 1; }
-        .saoodify-player-container .menu-item { background: none; border: none; color: #e4e4e7; padding: 12px 20px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left; transition: background 0.2s ease, color 0.2s ease; outline: none; width: 100%; text-decoration: none; }
+        
+        /* General Menu Styles */
+        .saoodify-player-container .settings-menu, .saoodify-player-container .quality-menu { position: absolute; background: rgba(15, 15, 20, 0.95); border: 1px solid rgba(88, 81, 219, 0.3); border-radius: 12px; padding: 8px 0; display: none; flex-direction: column; backdrop-filter: blur(15px); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; }
+        .saoodify-player-container .settings-menu { top: 55px; right: 0; min-width: 180px; transform: translateY(-10px); }
+        .saoodify-player-container .quality-menu { bottom: 55px; right: 50px; min-width: 130px; transform: translateY(10px); box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.7); }
+        
+        .saoodify-player-container .settings-menu.show, .saoodify-player-container .quality-menu.show { display: flex; transform: translateY(0); opacity: 1; }
+        
+        .saoodify-player-container .menu-item { background: none; border: none; color: #e4e4e7; padding: 12px 20px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left; transition: background 0.2s ease, color 0.2s ease; outline: none; width: 100%; text-decoration: none; justify-content: flex-start; }
         .saoodify-player-container .menu-item:hover { background: rgba(88, 81, 219, 0.15); color: #5851db; }
+        .saoodify-player-container .quality-option.active { color: #5851db; font-weight: 700; background: rgba(88, 81, 219, 0.1); }
+        .saoodify-player-container .quality-option.active::after { content: '✓'; margin-left: auto; }
+
         .saoodify-player-container .download-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 999999; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .saoodify-player-container .download-modal.show { display: flex; opacity: 1; }
         .saoodify-player-container .modal-content { background: rgba(10, 10, 15, 0.98); border: 2px solid rgba(88, 81, 219, 0.4); border-radius: 16px; padding: 20px; width: 90%; max-width: 300px; text-align: center; position: relative; transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 40px rgba(0,0,0,0.9); overflow: hidden; }
@@ -39,13 +48,21 @@
         .saoodify-player-container .modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #ccc; font-size: 26px; cursor: pointer; }
         .saoodify-player-container .modal-link { display: block; padding: 10px; margin: 6px 0; background: rgba(255, 255, 255, 0.05); color: #fff; text-decoration: none; border-radius: 10px; border: 1px solid rgba(88, 81, 219, 0.15); font-size: 14px; font-weight: 500; transition: 0.2s; }
         .saoodify-player-container .modal-link:hover { background: rgba(88, 81, 219, 0.2); border-color: #5851db; color: #5851db; }
+        
         .saoodify-player-container video { width: 100%; height: 100%; display: block; background: #000; object-fit: contain; pointer-events: none; }
         .saoodify-player-container .controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%); padding: 30px max(25px, env(safe-area-inset-right)) 20px max(25px, env(safe-area-inset-left)); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; opacity: 0; z-index: 101; }
         .saoodify-player-container .player-wrapper.show-controls .controls { transform: translateY(0); opacity: 1; }
         
-        .saoodify-player-container .timeline-header { display: flex; justify-content: flex-end; margin-bottom: 8px; width: 100%; }
-        .saoodify-player-container .live-indicator { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-        .saoodify-player-container .red-dot { width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; box-shadow: 0 0 8px #ff0000; animation: pulse 1.5s infinite; }
+        /* 🔥 Timeline Header & Dynamic LIVE Indicator 🔥 */
+        .saoodify-player-container .timeline-header { display: flex; justify-content: flex-end; margin-bottom: 8px; width: 100%; pointer-events: none; }
+        .saoodify-player-container .live-indicator { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); cursor: pointer; transition: all 0.3s ease; pointer-events: auto; }
+        .saoodify-player-container .live-indicator:hover { transform: scale(1.05); }
+        .saoodify-player-container .red-dot { width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; box-shadow: 0 0 8px #ff0000; animation: pulse 1.5s infinite; transition: all 0.3s ease; }
+        
+        /* When user seeks backwards from LIVE edge */
+        .saoodify-player-container .live-indicator.behind { color: #a0a0a0; text-shadow: none; }
+        .saoodify-player-container .live-indicator.behind .red-dot { background-color: #a0a0a0; box-shadow: none; animation: none; }
+
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
 
         .saoodify-player-container .progress-container { width: 100%; height: 7px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; margin-bottom: 20px; cursor: pointer; position: relative; transition: height 0.2s ease; }
@@ -55,7 +72,7 @@
         .saoodify-player-container .seek-preview-bar.active { opacity: 1; }
         .saoodify-player-container .progress-bar { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, #5851db 0%, #4a42d4 100%); border-radius: 10px; width: 0%; box-shadow: 0 0 20px rgba(88, 81, 219, 0.7); z-index: 3; }
         
-        .saoodify-player-container .controls-row { display: flex; align-items: center; gap: 18px; pointer-events: auto; }
+        .saoodify-player-container .controls-row { display: flex; align-items: center; gap: 18px; pointer-events: auto; position: relative; }
         .saoodify-player-container .btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(88, 81, 219, 0.2); border-radius: 12px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; color: rgba(88, 81, 219, 0.9); font-size: 18px; backdrop-filter: blur(10px); text-decoration: none; -webkit-tap-highlight-color: transparent; }
         .saoodify-player-container .btn svg { display: block; }
         @media (hover: hover) and (pointer: fine) { .saoodify-player-container .btn:hover { background: rgba(88, 81, 219, 0.15); border-color: rgba(88, 81, 219, 0.5); transform: scale(1.08); color: #fff; box-shadow: 0 0 15px rgba(88, 81, 219, 0.4); } }
@@ -73,18 +90,16 @@
         .saoodify-player-container .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; z-index: 50; pointer-events: none; }
         .saoodify-player-container .loading.active { display: block; }
         .saoodify-player-container .spinner { width: 65px; height: 65px; border: 5px solid rgba(88, 81, 219, 0.1); border-top: 5px solid #5851db; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        
         .saoodify-player-container .center-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); background: rgba(0, 0, 0, 0.6); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; z-index: 100; color: #5851db; }
         .saoodify-player-container .center-indicator.active { animation: centerPop 0.5s ease-out forwards; }
         .saoodify-player-container .center-indicator svg { width: 40px; height: 40px; fill: currentColor; }
-        @keyframes centerPop { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; } 80% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.3); opacity: 0; } }
         .saoodify-player-container .dt-indicator { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #5851db; background: rgba(0, 0, 0, 0.7); border-radius: 50%; width: 80px; height: 80px; opacity: 0; pointer-events: none; z-index: 120; }
         .saoodify-player-container .dt-indicator.left { left: 15%; }
         .saoodify-player-container .dt-indicator.right { right: 15%; }
         .saoodify-player-container .dt-indicator svg { width: 30px; height: 30px; fill: currentColor; }
         .saoodify-player-container .dt-indicator span { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: bold; margin-top: 2px; }
         .saoodify-player-container .dt-indicator.active { animation: dtPop 0.5s ease-out forwards; }
-        @keyframes dtPop { 0% { transform: translateY(-50%) scale(0.8); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-50%) scale(1.3); opacity: 0; } }
         
         .drm-error-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 0, 0, 0.15); border: 1px solid #ff4444; color: #ff4444; padding: 15px 25px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; text-align: center; display: none; z-index: 200; backdrop-filter: blur(5px); }
         .drm-error-msg.show { display: block; }
@@ -92,12 +107,12 @@
         @media (max-width: 1100px) { 
             .saoodify-player-container .top-right-container { top: max(15px, env(safe-area-inset-top)); left: max(25px, env(safe-area-inset-left)); right: max(25px, env(safe-area-inset-right)); } 
             .saoodify-player-container .video-title { font-size: 14px; }
-            .saoodify-player-container .controls { padding: 20px max(15px, env(safe-area-inset-right)) 15px max(15px, env(safe-area-inset-left)); } .saoodify-player-container .controls-row { gap: 6px; } .saoodify-player-container .btn { width: 36px; height: 36px; border-radius: 8px; } .saoodify-player-container .btn svg { width: 17px; height: 17px; } .saoodify-player-container .dt-indicator, .saoodify-player-container .center-indicator { width: 70px; height: 70px; } .saoodify-player-container .dt-indicator svg { width: 25px; height: 25px; } .saoodify-player-container .center-indicator svg { width: 35px; height: 35px; } .saoodify-player-container .dt-indicator span { font-size: 11px; } .saoodify-player-container .modal-content { max-width: 260px; padding: 15px; } .saoodify-player-container .modal-title { font-size: 16px; margin-bottom: 10px; } .saoodify-player-container .volume-container:hover .volume-slider-wrapper { width: 50px; } 
+            .saoodify-player-container .controls { padding: 20px max(15px, env(safe-area-inset-right)) 15px max(15px, env(safe-area-inset-left)); } .saoodify-player-container .controls-row { gap: 6px; } .saoodify-player-container .btn { width: 36px; height: 36px; border-radius: 8px; } .saoodify-player-container .btn svg { width: 17px; height: 17px; } .saoodify-player-container .dt-indicator, .saoodify-player-container .center-indicator { width: 70px; height: 70px; } .saoodify-player-container .dt-indicator svg { width: 25px; height: 25px; } .saoodify-player-container .center-indicator svg { width: 35px; height: 35px; } .saoodify-player-container .dt-indicator span { font-size: 11px; } .saoodify-player-container .modal-content { max-width: 260px; padding: 15px; } .saoodify-player-container .modal-title { font-size: 16px; margin-bottom: 10px; } .saoodify-player-container .volume-container:hover .volume-slider-wrapper { width: 50px; } .saoodify-player-container .quality-menu { bottom: 45px; right: 35px; }
         }
         @media (max-width: 480px) { 
             .saoodify-player-container .top-right-container { top: 10px; left: 10px; right: 10px; } 
             .saoodify-player-container .video-title { font-size: 13px; }
-            .saoodify-player-container .controls { padding: 15px 12px 10px 12px; } .saoodify-player-container .controls-row { gap: 6px; } .saoodify-player-container .btn { width: 34px; height: 34px; border-radius: 8px; } .saoodify-player-container .btn svg { width: 16px; height: 16px; } .saoodify-player-container .settings-menu { top: 45px; min-width: 140px; } .saoodify-player-container .menu-item { font-size: 13px; padding: 10px 15px; } .saoodify-player-container .modal-content { max-width: 250px; padding: 15px; } .saoodify-player-container .modal-title { font-size: 16px; margin-bottom: 12px; } .saoodify-player-container .volume-slider-wrapper { display: none !important; } 
+            .saoodify-player-container .controls { padding: 15px 12px 10px 12px; } .saoodify-player-container .controls-row { gap: 6px; } .saoodify-player-container .btn { width: 34px; height: 34px; border-radius: 8px; } .saoodify-player-container .btn svg { width: 16px; height: 16px; } .saoodify-player-container .settings-menu { top: 45px; min-width: 140px; } .saoodify-player-container .menu-item { font-size: 13px; padding: 10px 15px; } .saoodify-player-container .modal-content { max-width: 250px; padding: 15px; } .saoodify-player-container .modal-title { font-size: 16px; margin-bottom: 12px; } .saoodify-player-container .volume-slider-wrapper { display: none !important; } .saoodify-player-container .quality-menu { bottom: 45px; right: 10px; }
         }
     </style>
 </head>
@@ -123,53 +138,25 @@
                 </div>
             </div>
 
-            <div class="download-modal" id="speedModal">
-                <div class="modal-content">
-                    <button class="modal-close" id="closeSpeedModalBtn">&times;</button>
-                    <h3 class="modal-title">Playback Speed</h3>
-                    <a href="#" class="modal-link speed-option" data-speed="0.5">0.5x</a>
-                    <a href="#" class="modal-link speed-option" data-speed="1">Normal (1x)</a>
-                    <a href="#" class="modal-link speed-option" data-speed="1.25">1.25x</a>
-                    <a href="#" class="modal-link speed-option" data-speed="1.5">1.5x</a>
-                    <a href="#" class="modal-link speed-option" data-speed="2">2x</a>
-                </div>
-            </div>
-
-            <div class="download-modal" id="telegramModal">
-                <div class="modal-content">
-                    <button class="modal-close" id="closeTelegramModalBtn">&times;</button>
-                    <h3 class="modal-title">Watch on Telegram</h3>
-                    <a href="#" class="modal-link" id="tgServer1" target="_blank">Server 1 (Fast)</a>
-                    <a href="#" class="modal-link" id="tgServer2" target="_blank">Server 2 (Backup)</a>
-                </div>
-            </div>
-
-            <div class="download-modal" id="comingSoonModal">
-                <div class="modal-content" style="padding: 30px 20px;">
-                    <div style="background: rgba(88, 81, 219, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5851db" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                    </div>
-                    <h3 class="modal-title" style="margin-bottom: 10px; font-size: 18px; color: #fff; text-transform: none; letter-spacing: normal;">Coming Soon</h3>
-                    <p style="color: #9ca3af; font-size: 13px; margin-bottom: 25px; line-height: 1.5;">This feature is currently unavailable. The link hasn't been provided yet.</p>
-                    <button class="btn" id="closeComingSoonBtn" style="margin: 0; width: 100%;">Okay, got it!</button>
-                </div>
-            </div>
+            <!-- Modals -->
+            <div class="download-modal" id="speedModal"><div class="modal-content"><button class="modal-close" id="closeSpeedModalBtn">&times;</button><h3 class="modal-title">Playback Speed</h3><a href="#" class="modal-link speed-option" data-speed="0.5">0.5x</a><a href="#" class="modal-link speed-option" data-speed="1">Normal (1x)</a><a href="#" class="modal-link speed-option" data-speed="1.25">1.25x</a><a href="#" class="modal-link speed-option" data-speed="1.5">1.5x</a><a href="#" class="modal-link speed-option" data-speed="2">2x</a></div></div>
+            <div class="download-modal" id="telegramModal"><div class="modal-content"><button class="modal-close" id="closeTelegramModalBtn">&times;</button><h3 class="modal-title">Watch on Telegram</h3><a href="#" class="modal-link" id="tgServer1" target="_blank">Server 1 (Fast)</a><a href="#" class="modal-link" id="tgServer2" target="_blank">Server 2 (Backup)</a></div></div>
+            <div class="download-modal" id="comingSoonModal"><div class="modal-content" style="padding: 30px 20px;"><div style="background: rgba(88, 81, 219, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#5851db" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><h3 class="modal-title" style="margin-bottom: 10px; font-size: 18px; color: #fff; text-transform: none; letter-spacing: normal;">Coming Soon</h3><p style="color: #9ca3af; font-size: 13px; margin-bottom: 25px; line-height: 1.5;">This feature is currently unavailable. The link hasn't been provided yet.</p><button class="btn" id="closeComingSoonBtn" style="margin: 0; width: 100%;">Okay, got it!</button></div></div>
 
             <div class="loading"><div class="spinner"></div></div>
-            
             <div id="drmError" class="drm-error-msg"></div>
             
             <div class="dt-indicator left" id="dtLeft"><svg viewBox="0 0 24 24"><polygon points="11,19 2,12 11,5"></polygon><polygon points="22,19 13,12 22,5"></polygon></svg><span>10s</span></div>
             <div class="dt-indicator right" id="dtRight"><svg viewBox="0 0 24 24"><polygon points="13,19 22,12 13,5"></polygon><polygon points="2,19 11,12 2,5"></polygon></svg><span>10s</span></div>
-            
             <div class="center-indicator" id="centerIndicator"><svg viewBox="0 0 24 24" id="centerIcon" fill="currentColor"></svg></div>
 
             <video id="video" playsinline preload="auto"></video>
 
             <div class="controls" id="controls">
                 <div class="timeline-header">
-                    <div class="live-indicator">
-                        <span class="red-dot"></span>LIVE
+                    <!-- Dynamic Live Indicator -->
+                    <div class="live-indicator" id="liveIndicator" title="Click to jump to Live">
+                        <span class="red-dot"></span><span id="liveText">LIVE</span>
                     </div>
                 </div>
 
@@ -178,6 +165,7 @@
                     <div class="seek-preview-bar" id="seekPreviewBar"></div>
                     <div class="progress-bar" id="progressBar"></div>
                 </div>
+                
                 <div class="controls-row">
                     <button class="btn" id="rewindBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg></button>
                     <button class="btn btn-play" id="playBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></button>
@@ -185,6 +173,26 @@
                     
                     <div class="spacer"></div>
                     
+                    <!-- 🔥 Quality Settings Button 🔥 -->
+                    <div class="quality-container" id="qualityContainer">
+                        <button class="btn" id="qualityBtn" title="Quality Settings">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </button>
+                        <div class="quality-menu" id="qualityMenu">
+                            <!-- Quality options will be injected here via JS -->
+                        </div>
+                    </div>
+
                     <div class="volume-container" id="volumeContainer">
                         <button class="btn" id="muteBtn" title="Mute/Unmute (M)">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
@@ -213,9 +221,7 @@
         const video = document.getElementById('video');
         const playerWrapper = document.getElementById('playerWrapper');
         
-        // 🚀 MPD Link
         const videoSource = 'https://qp-pldt-live-bpk-ucd-prod.akamaized.net/bpk-tv/fifa_ppv1/default/index.mpd';
-        
         const posterUrl = '';
         const telegramId = '';
         const hasTelegram = false;
@@ -225,28 +231,28 @@
         if (posterUrl) { video.poster = posterUrl; }
 
         const playBtn = document.getElementById('playBtn'); const rewindBtn = document.getElementById('rewindBtn'); const forwardBtn = document.getElementById('forwardBtn'); const progressContainer = document.getElementById('progressContainer'); const progressBar = document.getElementById('progressBar'); const seekPreviewBar = document.getElementById('seekPreviewBar'); const bufferBar = document.getElementById('bufferBar'); const muteBtn = document.getElementById('muteBtn'); const fullscreenBtn = document.getElementById('fullscreenBtn'); const loading = document.querySelector('.loading'); const drmError = document.getElementById('drmError'); const volumeSlider = document.getElementById('volumeSlider'); const volumeProgress = document.getElementById('volumeProgress'); const dtLeft = document.getElementById('dtLeft'); const dtRight = document.getElementById('dtRight'); const centerIndicator = document.getElementById('centerIndicator'); const centerIcon = document.getElementById('centerIcon'); const settingsBtn = document.getElementById('settingsBtn'); const settingsMenu = document.getElementById('settingsMenu'); const speedBtn = document.getElementById('speedBtn'); const speedModal = document.getElementById('speedModal'); const closeSpeedModalBtn = document.getElementById('closeSpeedModalBtn'); const speedOptions = document.querySelectorAll('.speed-option'); const telegramBtn = document.getElementById('telegramBtn'); const telegramModal = document.getElementById('telegramModal'); const closeTelegramModalBtn = document.getElementById('closeTelegramModalBtn'); const tgServer1 = document.getElementById('tgServer1'); const tgServer2 = document.getElementById('tgServer2');
-        const comingSoonModal = document.getElementById('comingSoonModal');
-        const closeComingSoonBtn = document.getElementById('closeComingSoonBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
+        const comingSoonModal = document.getElementById('comingSoonModal'); const closeComingSoonBtn = document.getElementById('closeComingSoonBtn'); const downloadBtn = document.getElementById('downloadBtn');
+        const liveIndicator = document.getElementById('liveIndicator'); const liveText = document.getElementById('liveText');
+        const qualityBtn = document.getElementById('qualityBtn'); const qualityMenu = document.getElementById('qualityMenu');
 
         if (telegramId) { tgServer1.href = 'tg://resolve?domain=Zs_Official_Bot&start=' + telegramId; tgServer2.href = 'https://t.me/Zs_Official_Bot?start=' + telegramId; } else { tgServer1.href = 'https://t.me/Zs_Official_Bot'; tgServer2.href = 'https://t.me/Zs_Official_Bot'; }
 
         let hideControlsTimeout; let lastTapTime = 0; const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-        settingsBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.toggle('show'); resetControlsTimeoutOnAction(); });
+        settingsBtn.addEventListener('click', (e) => { e.stopPropagation(); qualityMenu.classList.remove('show'); settingsMenu.classList.toggle('show'); resetControlsTimeoutOnAction(); });
+        qualityBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); qualityMenu.classList.toggle('show'); resetControlsTimeoutOnAction(); });
+        
         speedBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); speedModal.classList.add('show'); resetControlsTimeoutOnAction(); });
         closeSpeedModalBtn.addEventListener('click', (e) => { e.stopPropagation(); speedModal.classList.remove('show'); }); speedModal.addEventListener('click', (e) => { if (e.target === speedModal) speedModal.classList.remove('show'); });
         speedOptions.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); video.playbackRate = parseFloat(link.getAttribute('data-speed')); speedModal.classList.remove('show'); }); });
         
-        closeComingSoonBtn.addEventListener('click', (e) => { e.stopPropagation(); comingSoonModal.classList.remove('show'); });
-        comingSoonModal.addEventListener('click', (e) => { if (e.target === comingSoonModal) comingSoonModal.classList.remove('show'); });
-
+        closeComingSoonBtn.addEventListener('click', (e) => { e.stopPropagation(); comingSoonModal.classList.remove('show'); }); comingSoonModal.addEventListener('click', (e) => { if (e.target === comingSoonModal) comingSoonModal.classList.remove('show'); });
         telegramBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); if(hasTelegram) { telegramModal.classList.add('show'); } else { comingSoonModal.classList.add('show'); } resetControlsTimeoutOnAction(); }); 
         downloadBtn.addEventListener('click', (e) => { e.stopPropagation(); settingsMenu.classList.remove('show'); if(hasDownload) { window.open(downloadUrl, '_blank'); } else { comingSoonModal.classList.add('show'); } resetControlsTimeoutOnAction(); });
-        
         closeTelegramModalBtn.addEventListener('click', (e) => { e.stopPropagation(); telegramModal.classList.remove('show'); }); telegramModal.addEventListener('click', (e) => { if (e.target === telegramModal) telegramModal.classList.remove('show'); });
+        
         document.addEventListener('contextmenu', (e) => e.preventDefault());
-        playerWrapper.addEventListener('mousemove', showControls); playerWrapper.addEventListener('mouseenter', showControls); playerWrapper.addEventListener('mouseleave', () => { if (!video.paused) { playerWrapper.classList.remove('show-controls'); settingsMenu.classList.remove('show'); clearTimeout(hideControlsTimeout); } });
+        playerWrapper.addEventListener('mousemove', showControls); playerWrapper.addEventListener('mouseenter', showControls); playerWrapper.addEventListener('mouseleave', () => { if (!video.paused) { playerWrapper.classList.remove('show-controls'); settingsMenu.classList.remove('show'); qualityMenu.classList.remove('show'); clearTimeout(hideControlsTimeout); } });
 
         // 🚀 SHAKA PLAYER INITIALIZATION 🚀
         async function initApp() {
@@ -254,16 +260,9 @@
             
             if (shaka.Player.isBrowserSupported()) {
                 const player = new shaka.Player(video);
+                window.shakaPlayer = player; // Export globally for timeline usage
                 
-                // 🔥 CLEARKEY INJECTION (Direct Hex Keys) 🔥
-                player.configure({
-                    drm: {
-                        clearKeys: {
-                            '2c338a117d434ce4bbe3569231af90f1': 'a9633d901ee8a3f4f58ac314b5c5f4fb'
-                        }
-                    }
-                });
-
+                player.configure({ drm: { clearKeys: { '2c338a117d434ce4bbe3569231af90f1': 'a9633d901ee8a3f4f58ac314b5c5f4fb' } } });
                 player.addEventListener('error', onPlayerErrorEvent);
 
                 try {
@@ -271,12 +270,44 @@
                     await player.load(videoSource);
                     loading.classList.remove('active');
                     video.play();
+                    
+                    // Fetch Qualities from MPD
+                    populateQualityMenu(player);
                 } catch (e) {
                     onPlayerError(e);
                 }
             } else {
                 console.error('Browser not supported!');
             }
+        }
+
+        // 🔥 Dynamic Quality Menu Builder 🔥
+        function populateQualityMenu(player) {
+            const tracks = player.getVariantTracks();
+            // Filter and sort available resolutions
+            const heights = [...new Set(tracks.filter(t => t.type === 'video' && t.height).map(t => t.height))].sort((a,b) => b-a);
+            
+            let html = `<button class="menu-item quality-option active" data-id="auto">Auto</button>`;
+            heights.forEach(h => { html += `<button class="menu-item quality-option" data-id="${h}">${h}p</button>`; });
+            qualityMenu.innerHTML = html;
+
+            document.querySelectorAll('.quality-option').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.quality-option').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const val = btn.getAttribute('data-id');
+                    if(val === 'auto') {
+                        player.configure({abr: {enabled: true}});
+                    } else {
+                        player.configure({abr: {enabled: false}});
+                        const trackToSelect = player.getVariantTracks().find(t => t.height == val);
+                        if(trackToSelect) { player.selectVariantTrack(trackToSelect, true); }
+                    }
+                    qualityMenu.classList.remove('show');
+                });
+            });
         }
 
         function onPlayerErrorEvent(event) { onPlayerError(event.detail); }
@@ -291,31 +322,37 @@
 
         function fastSeekOptimized(amount) { let newTime = video.currentTime + amount; video.currentTime = Math.max(0, Math.min(newTime, video.duration)); }
         function triggerIndicator(element) { element.classList.remove('active'); void element.offsetWidth; element.classList.add('active'); resetControlsTimeoutOnAction(); }
+        
         function togglePlay() {
             if (video.paused) { 
                 let playPromise = video.play(); 
-                if (playPromise !== undefined) { 
-                    playPromise.then(() => { 
-                        playBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'; 
-                        centerIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'; 
-                        triggerIndicator(centerIndicator); 
-                        showControls(); 
-                    }).catch(()=>{}); 
-                }
+                if (playPromise !== undefined) { playPromise.then(() => { playBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>'; centerIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'; triggerIndicator(centerIndicator); showControls(); }).catch(()=>{}); }
             } else { 
                 video.pause(); 
-                playBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>'; 
-                centerIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; 
-                triggerIndicator(centerIndicator); 
-                showControls(); 
+                playBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>'; centerIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; triggerIndicator(centerIndicator); showControls(); 
             }
         }
-        function showControls() { playerWrapper.classList.add('show-controls'); clearTimeout(hideControlsTimeout); if (!video.paused) { hideControlsTimeout = setTimeout(() => { playerWrapper.classList.remove('show-controls'); settingsMenu.classList.remove('show'); }, 5000); } }
+        
+        function showControls() { playerWrapper.classList.add('show-controls'); clearTimeout(hideControlsTimeout); if (!video.paused) { hideControlsTimeout = setTimeout(() => { playerWrapper.classList.remove('show-controls'); settingsMenu.classList.remove('show'); qualityMenu.classList.remove('show'); }, 5000); } }
 
         playBtn.addEventListener('click', togglePlay);
 
         let isDraggingTimeline = false;
-        function getTimelinePos(e) { const rect = progressContainer.getBoundingClientRect(); let clientX = e.clientX || (e.touches ? e.touches[0].clientX : (e.changedTouches ? e.changedTouches[0].clientX : 0)); return Math.max(0, Math.min((clientX - rect.left) / rect.width, 1)); }
+        
+        // Timeline Calculation based on seekable window
+        function getSeekRangeInfo() {
+            if(window.shakaPlayer) {
+                const sr = window.shakaPlayer.seekRange();
+                return sr ? { start: sr.start, end: sr.end, total: sr.end - sr.start } : null;
+            } return null;
+        }
+
+        function getTimelinePos(e) { 
+            const rect = progressContainer.getBoundingClientRect(); 
+            let clientX = e.clientX || (e.touches ? e.touches[0].clientX : (e.changedTouches ? e.changedTouches[0].clientX : 0)); 
+            return Math.max(0, Math.min((clientX - rect.left) / rect.width, 1)); 
+        }
+        
         progressContainer.addEventListener('mousemove', (e) => { if (!isDraggingTimeline) { seekPreviewBar.style.width = (getTimelinePos(e) * 100) + '%'; seekPreviewBar.classList.add('active'); } });
         progressContainer.addEventListener('mouseleave', () => { if (!isDraggingTimeline) seekPreviewBar.classList.remove('active'); });
 
@@ -332,47 +369,69 @@
         function endDrag(e) { 
             if (!isDraggingTimeline) return; 
             isDraggingTimeline = false; 
-            if (isFinite(video.duration)) { 
-                video.currentTime = getTimelinePos(e) * video.duration; 
-            }
+            const srInfo = getSeekRangeInfo();
+            if (srInfo) { video.currentTime = srInfo.start + (getTimelinePos(e) * srInfo.total); }
             seekPreviewBar.classList.remove('active'); 
             document.removeEventListener('mousemove', updateDrag); document.removeEventListener('touchmove', updateDrag); document.removeEventListener('mouseup', endDrag); document.removeEventListener('touchend', endDrag); resetControlsTimeoutOnAction(); 
         }
 
         progressContainer.addEventListener('mousedown', startDrag); progressContainer.addEventListener('touchstart', startDrag, { passive: false });
         
+        // Go Live Button Click
+        liveIndicator.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const srInfo = getSeekRangeInfo();
+            if (srInfo) { video.currentTime = srInfo.end; }
+        });
+
         video.addEventListener('timeupdate', () => { 
-            if(!video.seeking && !isDraggingTimeline) { 
-                if (!isFinite(video.duration)) {
-                    progressBar.style.width = '100%'; 
+            const srInfo = getSeekRangeInfo();
+            if(!video.seeking && !isDraggingTimeline && srInfo) { 
+                const current = video.currentTime - srInfo.start;
+                
+                // Update Timeline Progress
+                if(srInfo.total > 0) {
+                    progressBar.style.width = Math.max(0, Math.min(100, (current / srInfo.total) * 100)) + '%'; 
                 } else {
-                    progressBar.style.width = ((video.currentTime / video.duration) * 100) + '%'; 
+                    progressBar.style.width = '100%';
+                }
+                
+                // Live Edge Detection Logic
+                const isAtLiveEdge = (srInfo.end - video.currentTime) <= 5; // 5 Sec Buffer
+                if(isAtLiveEdge) {
+                    liveIndicator.classList.remove('behind');
+                    liveText.innerText = 'LIVE';
+                } else {
+                    liveIndicator.classList.add('behind');
+                    liveText.innerText = 'GO LIVE';
                 }
             } 
         });
 
         function updateBuffer() {
-            if (video.buffered.length > 0) {
+            const srInfo = getSeekRangeInfo();
+            if (srInfo && video.buffered.length > 0) {
                 let maxBuffered = 0;
                 for (let i = 0; i < video.buffered.length; i++) {
                     if (video.buffered.start(i) <= video.currentTime && video.buffered.end(i) >= video.currentTime) {
                         maxBuffered = video.buffered.end(i); break;
                     }
                 }
-                if (maxBuffered === 0) maxBuffered = video.buffered.end(video.buffered.length - 1);
-                let duration = video.duration;
-                if (duration > 0 && isFinite(duration)) {
-                    bufferBar.style.width = ((maxBuffered / duration) * 100) + '%';
-                } else if (!isFinite(duration)) {
+                if (maxBuffered === 0 && video.buffered.length > 0) maxBuffered = video.buffered.end(video.buffered.length - 1);
+                
+                if (srInfo.total > 0) {
+                    bufferBar.style.width = Math.max(0, Math.min(100, ((maxBuffered - srInfo.start) / srInfo.total) * 100)) + '%';
+                } else {
                     bufferBar.style.width = '100%';
                 }
             }
         }
+        
         video.addEventListener('progress', updateBuffer);
         video.addEventListener('timeupdate', updateBuffer);
 
         playerWrapper.addEventListener('click', (e) => {
-            if(!e.target.closest('.top-right-container')) settingsMenu.classList.remove('show');
+            if(!e.target.closest('.top-right-container')) { settingsMenu.classList.remove('show'); qualityMenu.classList.remove('show'); }
             if(e.target.closest('.controls') || e.target.closest('.progress-container') || e.target.closest('.top-right-container') || e.target.closest('.download-modal')) return;
             const currentTime = new Date().getTime(); const tapLength = currentTime - lastTapTime; const rect = playerWrapper.getBoundingClientRect(); const clickX = e.clientX - rect.left; let region = clickX < rect.width / 3 ? 'left' : (clickX > (rect.width * 2) / 3 ? 'right' : 'center');
             
@@ -426,6 +485,7 @@
             if (!video.paused) hideControlsTimeout = setTimeout(() => { 
                 playerWrapper.classList.remove('show-controls'); 
                 settingsMenu.classList.remove('show'); 
+                qualityMenu.classList.remove('show'); 
             }, 5000); 
         }
     })();
